@@ -53,3 +53,11 @@ R F R F R F R F
 
 I have written a lot of games, essentially you'd use a component entity system. I'll just apply one concept from it and my Robot entity will not contain behaviour.
 
+### To Run
+```./gradlew test```
+
+### Notes after implementing the code
+Next I would implement:
+  * The application later
+  * More scenarios i.e. lost top, bottom, left, right of the grid
+  * Error handing for the application later safe guarding valid data for the service layer
