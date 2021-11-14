@@ -10,8 +10,8 @@ public class MarsRobotService {
         this.bounds = bounds;
     }
 
-    public RobotPosition moveRobot(RobotPosition position, List<MoveInstruction> instructions) {
-        return position;
+    public List<RobotPosition> robotMissions(List<RobotMission> missions) {
+        return List.of(missions.get(0).getPosition());
     }
 
 }

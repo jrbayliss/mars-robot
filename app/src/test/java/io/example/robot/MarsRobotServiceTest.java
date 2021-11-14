@@ -20,8 +20,8 @@ class MarsRobotServiceTest {
     @Test
     void givenNoMoves_thenRobotPositionIsSameAsInput() {
         init(grid1x1());
-        RobotPosition currentRobotPosition = service.moveRobot(position(0, 0, NORTH), instructions());
-        assertThat(currentRobotPosition).isEqualTo(position(0, 0, NORTH));
+        List<RobotPosition> currentRobotPositions = service.robotMissions(missions(mission(position(0, 0, NORTH), instructions())));
+        assertThat(currentRobotPositions).containsOnly(position(0, 0, NORTH));
     }
 
     private void init(GridBounds bounds) {
@@ -38,5 +38,13 @@ class MarsRobotServiceTest {
 
     private static RobotPosition position(int x, int y, Orientation orientation) {
         return new RobotPosition(x, y, orientation);
+    }
+
+    private static List<RobotMission> missions(RobotMission... missions) {
+        return List.of(missions);
+    }
+
+    private static RobotMission mission(RobotPosition position, List<MoveInstruction> instructions) {
+        return new RobotMission(position, instructions);
     }
 }
