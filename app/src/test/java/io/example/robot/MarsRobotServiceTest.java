@@ -16,6 +16,7 @@ import static io.example.robot.Orientation.EAST;
 import static io.example.robot.Orientation.NORTH;
 import static io.example.robot.Orientation.SOUTH;
 import static io.example.robot.Orientation.WEST;
+import static io.example.robot.TestUtil.grid3x3;
 import static io.example.robot.TestUtil.instructions;
 import static io.example.robot.TestUtil.lostPosition;
 import static io.example.robot.TestUtil.mission;
@@ -55,15 +56,33 @@ class MarsRobotServiceTest {
     @ParameterizedTest
     @MethodSource("forwardInstructionApplied")
     void givenForwardInstructionApplied_robotMovesInTheDirectionItIsFacing(RobotPosition initialPosition, List<MoveInstruction> instructions, RobotPosition finalPosition) {
-        init(TestUtil.grid3x3());
+        init(grid3x3());
         assertThat(singleRobotMission(initialPosition, instructions)).isEqualTo(finalPosition);
     }
 
     @ParameterizedTest
     @MethodSource("lostInstructionsApplied")
     void givenTwoForwardInstructionsAreApplied_robotIsOutOfBoundsAndDeemedLost(RobotPosition initialPosition, List<MoveInstruction> instructions, RobotPosition finalPosition) {
-        init(TestUtil.grid3x3());
+        init(grid3x3());
         assertThat(singleRobotMission(initialPosition, instructions)).isEqualTo(finalPosition);
+    }
+
+    @Test
+    void givenTwoMissions_thenTwoMissionAreReturned() {
+        init(grid3x3());
+        assertThat(service.robotMissions(missions(
+            mission(position(1, 1, NORTH), instructions(FORWARD)),
+            mission(position(1, 1, EAST), instructions(FORWARD))))
+        ).containsExactly(position(1, 2, NORTH), position(2, 1, EAST));
+    }
+
+    @Test
+    void givenFirstMissionRobotIsLost_thenSecondMissionWillUseScentAndNotBeLost() {
+        init(grid3x3());
+        assertThat(service.robotMissions(missions(
+            mission(position(1, 1, NORTH), instructions(FORWARD, FORWARD)),
+            mission(position(1, 1, NORTH), instructions(FORWARD, FORWARD))))
+        ).containsExactly(lostPosition(1, 2, NORTH), position(1, 2, NORTH));
     }
 
     private static Stream<Arguments> rightInstructionApplied() {
@@ -95,10 +114,10 @@ class MarsRobotServiceTest {
 
     private static Stream<Arguments> lostInstructionsApplied() {
         return Stream.of(
-            Arguments.of(position(1, 1, NORTH), instructions(FORWARD, FORWARD), lostPosition(1, 3, NORTH)),
-            Arguments.of(position(1, 1, EAST), instructions(FORWARD, FORWARD), lostPosition(3, 1, EAST)),
-            Arguments.of(position(1, 1, SOUTH), instructions(FORWARD, FORWARD), lostPosition(1, -1, SOUTH)),
-            Arguments.of(position(1, 1, WEST), instructions(FORWARD, FORWARD), lostPosition(-1, 1, WEST))
+            Arguments.of(position(1, 1, NORTH), instructions(FORWARD, FORWARD), lostPosition(1, 2, NORTH)),
+            Arguments.of(position(1, 1, EAST), instructions(FORWARD, FORWARD), lostPosition(2, 1, EAST)),
+            Arguments.of(position(1, 1, SOUTH), instructions(FORWARD, FORWARD), lostPosition(1, 0, SOUTH)),
+            Arguments.of(position(1, 1, WEST), instructions(FORWARD, FORWARD), lostPosition(0, 1, WEST))
         );
     }
 

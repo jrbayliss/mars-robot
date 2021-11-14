@@ -11,8 +11,8 @@ public class TestUtil {
         return new GridBounds(3, 3);
     }
 
-    static GridBounds grid5x3() {
-        return new GridBounds(5, 3);
+    static GridBounds grid6x4() {
+        return new GridBounds(6, 4);
     }
 
     static List<MoveInstruction> instructions(MoveInstruction... moves) {
