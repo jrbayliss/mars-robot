@@ -100,6 +100,5 @@ public class MarsRobotService {
         return new GridPosition(
             currentGridPosition.getX() + gridPositionDelta.getX(),
             currentGridPosition.getY() + gridPositionDelta.getY());
-
     }
 }

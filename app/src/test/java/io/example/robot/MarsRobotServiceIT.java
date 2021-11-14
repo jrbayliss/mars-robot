@@ -3,8 +3,6 @@ package io.example.robot;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import java.util.List;
-
 import static io.example.robot.MoveInstruction.FORWARD;
 import static io.example.robot.MoveInstruction.LEFT;
 import static io.example.robot.MoveInstruction.RIGHT;
