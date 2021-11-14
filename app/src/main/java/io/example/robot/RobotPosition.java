@@ -3,34 +3,29 @@ package io.example.robot;
 import java.util.Objects;
 
 public class RobotPosition {
-    private int x;
-    private int y;
+    private GridPosition gridPosition;
     private Orientation orientation;
+    private boolean isLost = false;
 
-    public RobotPosition(int x, int y, Orientation orientation) {
-        this.x = x;
-        this.y = y;
+    public RobotPosition(GridPosition gridPosition, Orientation orientation) {
+        this.gridPosition = gridPosition;
         this.orientation = orientation;
     }
 
-    public int getX() {
-        return x;
+    public GridPosition getPosition() {
+        return gridPosition;
     }
 
-    public int getY() {
-        return y;
-    }
-
-    public void setX(int x) {
-        this.x = x;
-    }
-
-    public void setY(int y) {
-        this.y = y;
+    public void setPosition(GridPosition gridPosition) {
+        this.gridPosition = gridPosition;
     }
 
     public void setOrientation(Orientation orientation) {
         this.orientation = orientation;
+    }
+
+    public void setLost(boolean lost) {
+        isLost = lost;
     }
 
     public Orientation getOrientation() {
@@ -41,21 +36,21 @@ public class RobotPosition {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (!(o instanceof RobotPosition)) return false;
-        RobotPosition robotPosition = (RobotPosition) o;
-        return x == robotPosition.x && y == robotPosition.y && orientation == robotPosition.orientation;
+        RobotPosition position1 = (RobotPosition) o;
+        return isLost == position1.isLost && Objects.equals(gridPosition, position1.gridPosition) && orientation == position1.orientation;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(x, y, orientation);
+        return Objects.hash(gridPosition, orientation, isLost);
     }
 
     @Override
     public String toString() {
-        return "Robot{" +
-            "x=" + x +
-            ", y=" + y +
+        return "RobotPosition{" +
+            "position=" + gridPosition +
             ", orientation=" + orientation +
+            ", isLost=" + isLost +
             '}';
     }
 }

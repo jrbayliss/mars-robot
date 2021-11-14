@@ -5,16 +5,19 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import static io.example.robot.MoveInstruction.FORWARD;
+import static io.example.robot.MoveInstruction.LEFT;
+import static io.example.robot.MoveInstruction.RIGHT;
 import static io.example.robot.Orientation.EAST;
 import static io.example.robot.Orientation.NORTH;
 import static io.example.robot.Orientation.SOUTH;
 import static io.example.robot.Orientation.WEST;
 
-
 public class MarsRobotService {
-    private GridBounds bounds;
+    private GridBounds gridBounds;
     private static final Map<Orientation, Orientation> APPLY_RIGHT_MAP = new HashMap<>();
     private static final Map<Orientation, Orientation> APPLY_LEFT_MAP = new HashMap<>();
+    private static final Map<Orientation, GridPosition> APPLY_FORWARD_MAP = new HashMap<>();
 
     public MarsRobotService() {
         APPLY_RIGHT_MAP.put(NORTH, EAST);
@@ -26,10 +29,15 @@ public class MarsRobotService {
         APPLY_LEFT_MAP.put(WEST, SOUTH);
         APPLY_LEFT_MAP.put(SOUTH, EAST);
         APPLY_LEFT_MAP.put(EAST, NORTH);
+
+        APPLY_FORWARD_MAP.put(NORTH, new GridPosition(0,1));
+        APPLY_FORWARD_MAP.put(EAST, new GridPosition(1,0));
+        APPLY_FORWARD_MAP.put(SOUTH, new GridPosition(0,-1));
+        APPLY_FORWARD_MAP.put(WEST, new GridPosition(-1,0));
     }
 
     public void init(GridBounds bounds) {
-        this.bounds = bounds;
+        this.gridBounds = bounds;
     }
 
     public List<RobotPosition> robotMissions(List<RobotMission> missions) {
@@ -37,47 +45,52 @@ public class MarsRobotService {
             .map(mission -> moveRobot(mission.getPosition(), mission.getInstructions())).collect(Collectors.toList());
     }
 
-    public RobotPosition moveRobot(RobotPosition position, List<MoveInstruction> instructions) {
+    public RobotPosition moveRobot(RobotPosition robotPosition, List<MoveInstruction> instructions) {
         instructions.forEach(instruction ->  {
-            updatePosition(position, instruction);
+            if (instruction == FORWARD) {
+                GridPosition nextGridPosition = nextForwardGridPosition(robotPosition);
+                robotPosition.setPosition(nextGridPosition);
+                if (!inBounds(nextGridPosition)) {
+                    robotPosition.setLost(true);
+                }
+            } else {
+                applyRotation(robotPosition, instruction);
+            }
         });
-        return position;
+        return robotPosition;
     }
 
-    private void updatePosition(RobotPosition position, MoveInstruction instruction) {
-        if (instruction == MoveInstruction.RIGHT) {
-            applyRight(position);
-        } else if (instruction == MoveInstruction.LEFT) {
-            applyLeft(position);
-        } else {
-            applyForward(position);
+    private boolean inBounds(GridPosition gridPosition) {
+        if (gridPosition.getX() < 0 || gridPosition.getX() >= gridBounds.getWidth() ||
+            gridPosition.getY() < 0 || gridPosition.getY() >= gridBounds.getHeight()) {
+            return false;
+        }
+        return true;
+    }
+
+    private void applyRotation(RobotPosition robotPosition, MoveInstruction instruction) {
+        if (instruction == RIGHT) {
+            applyRight(robotPosition);
+        } else if (instruction == LEFT) {
+            applyLeft(robotPosition);
         }
     }
 
-    private void applyRight(RobotPosition position) {
-        position.setOrientation(APPLY_RIGHT_MAP.get(position.getOrientation()));
+    private void applyRight(RobotPosition robotPosition) {
+        robotPosition.setOrientation(APPLY_RIGHT_MAP.get(robotPosition.getOrientation()));
     }
 
-    private void applyLeft(RobotPosition position) {
-        position.setOrientation(APPLY_LEFT_MAP.get(position.getOrientation()));
+    private void applyLeft(RobotPosition robotPosition) {
+        robotPosition.setOrientation(APPLY_LEFT_MAP.get(robotPosition.getOrientation()));
     }
 
-    private void applyForward(RobotPosition position) {
-        Orientation orientation = position.getOrientation();
-        switch (orientation) {
-            case NORTH:
-                position.setY(position.getY() + 1);
-                break;
-            case EAST:
-                position.setX(position.getX() + 1);
-                break;
-            case SOUTH:
-                position.setY(position.getY() - 1);
-                break;
-            case WEST:
-                position.setX(position.getX() - 1);
-                break;
-        }
-    }
+    private GridPosition nextForwardGridPosition(RobotPosition robotPosition) {
+        Orientation orientation = robotPosition.getOrientation();
+        GridPosition gridPositionDelta = APPLY_FORWARD_MAP.get(orientation);
+        GridPosition currentGridPosition = robotPosition.getPosition();
+        return new GridPosition(
+            currentGridPosition.getX() + gridPositionDelta.getX(),
+            currentGridPosition.getY() + gridPositionDelta.getY());
 
+    }
 }

@@ -54,6 +54,13 @@ class MarsRobotServiceTest {
         assertThat(singleRobotMission(initialPosition, instructions)).isEqualTo(finalPosition);
     }
 
+    @ParameterizedTest
+    @MethodSource("lostInstructionsApplied")
+    void givenTwoForwardInstructionsAreApplied_robotIsOutOfBoundsAndDeemedLost(RobotPosition initialPosition, List<MoveInstruction> instructions, RobotPosition finalPosition) {
+        init(grid3x3());
+        assertThat(singleRobotMission(initialPosition, instructions)).isEqualTo(finalPosition);
+    }
+
     private static Stream<Arguments> rightInstructionApplied() {
         return Stream.of(
             Arguments.of(position(0, 0, NORTH), instructions(RIGHT), position(0, 0, EAST)),
@@ -81,6 +88,15 @@ class MarsRobotServiceTest {
         );
     }
 
+    private static Stream<Arguments> lostInstructionsApplied() {
+        return Stream.of(
+            Arguments.of(position(1, 1, NORTH), instructions(FORWARD, FORWARD), lostPosition(1, 3, NORTH)),
+            Arguments.of(position(1, 1, EAST), instructions(FORWARD, FORWARD), lostPosition(3, 1, EAST)),
+            Arguments.of(position(1, 1, SOUTH), instructions(FORWARD, FORWARD), lostPosition(1, -1, SOUTH)),
+            Arguments.of(position(1, 1, WEST), instructions(FORWARD, FORWARD), lostPosition(-1, 1, WEST))
+        );
+    }
+
     private void init(GridBounds bounds) {
         service.init(bounds);
     }
@@ -105,7 +121,17 @@ class MarsRobotServiceTest {
     }
 
     private static RobotPosition position(int x, int y, Orientation orientation) {
-        return new RobotPosition(x, y, orientation);
+        return new RobotPosition(gridPosition(x, y), orientation);
+    }
+
+    private static RobotPosition lostPosition(int x, int y, Orientation orientation) {
+        RobotPosition position = new RobotPosition(gridPosition(x, y), orientation);
+        position.setLost(true);
+        return position;
+    }
+
+    private static GridPosition gridPosition(int x, int y) {
+        return new GridPosition(x, y);
     }
 
     private static List<RobotMission> missions(RobotMission... missions) {
