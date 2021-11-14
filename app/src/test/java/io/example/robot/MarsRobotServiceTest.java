@@ -5,9 +5,11 @@ import org.junit.jupiter.api.Test;
 
 import java.util.List;
 
+import static io.example.robot.MoveInstruction.LEFT;
 import static io.example.robot.MoveInstruction.RIGHT;
 import static io.example.robot.Orientation.EAST;
 import static io.example.robot.Orientation.NORTH;
+import static io.example.robot.Orientation.WEST;
 import static org.assertj.core.api.Assertions.assertThat;
 
 class MarsRobotServiceTest {
@@ -26,9 +28,15 @@ class MarsRobotServiceTest {
     }
 
     @Test
-    void givenRightInstructionApplied_robotIsRotated90Degrees() {
+    void givenRightInstructionApplied_robotIsRotatedRight90Degrees() {
         init(grid1x1());
         assertThat(singleRobotMission(position(0, 0, NORTH), instructions(RIGHT))).isEqualTo(position(0, 0, EAST));
+    }
+
+    @Test
+    void givenLeftInstructionApplied_robotIsRotatedLeft90Degrees() {
+        init(grid1x1());
+        assertThat(singleRobotMission(position(0, 0, NORTH), instructions(LEFT))).isEqualTo(position(0, 0, WEST));
     }
 
     private void init(GridBounds bounds) {
