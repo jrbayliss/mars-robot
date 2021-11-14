@@ -49,6 +49,8 @@ public class MarsRobotService {
             applyRight(position);
         } else if (instruction == MoveInstruction.LEFT) {
             applyLeft(position);
+        } else {
+            applyForward(position);
         }
     }
 
@@ -58,6 +60,24 @@ public class MarsRobotService {
 
     private void applyLeft(RobotPosition position) {
         position.setOrientation(APPLY_LEFT_MAP.get(position.getOrientation()));
+    }
+
+    private void applyForward(RobotPosition position) {
+        Orientation orientation = position.getOrientation();
+        switch (orientation) {
+            case NORTH:
+                position.setY(position.getY() + 1);
+                break;
+            case EAST:
+                position.setX(position.getX() + 1);
+                break;
+            case SOUTH:
+                position.setY(position.getY() - 1);
+                break;
+            case WEST:
+                position.setX(position.getX() - 1);
+                break;
+        }
     }
 
 }

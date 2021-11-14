@@ -47,6 +47,13 @@ class MarsRobotServiceTest {
         assertThat(singleRobotMission(initialPosition, instructions)).isEqualTo(finalPosition);
     }
 
+    @ParameterizedTest
+    @MethodSource("forwardInstructionApplied")
+    void givenForwardInstructionApplied_robotMovesInTheDirectionItIsFacing(RobotPosition initialPosition, List<MoveInstruction> instructions, RobotPosition finalPosition) {
+        init(grid3x3());
+        assertThat(singleRobotMission(initialPosition, instructions)).isEqualTo(finalPosition);
+    }
+
     private static Stream<Arguments> rightInstructionApplied() {
         return Stream.of(
             Arguments.of(position(0, 0, NORTH), instructions(RIGHT), position(0, 0, EAST)),
@@ -65,12 +72,25 @@ class MarsRobotServiceTest {
         );
     }
 
+    private static Stream<Arguments> forwardInstructionApplied() {
+        return Stream.of(
+            Arguments.of(position(1, 1, NORTH), instructions(FORWARD), position(1, 2, NORTH)),
+            Arguments.of(position(1, 1, EAST), instructions(FORWARD), position(2, 1, EAST)),
+            Arguments.of(position(1, 1, SOUTH), instructions(FORWARD), position(1, 0, SOUTH)),
+            Arguments.of(position(1, 1, WEST), instructions(FORWARD), position(0, 1, WEST))
+        );
+    }
+
     private void init(GridBounds bounds) {
         service.init(bounds);
     }
 
     private static GridBounds grid1x1() {
         return new GridBounds(1,1);
+    }
+
+    private static GridBounds grid3x3() {
+        return new GridBounds(3,3);
     }
 
     private RobotPosition singleRobotMission(RobotPosition position, List<MoveInstruction> instructions) {
