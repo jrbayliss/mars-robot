@@ -21,6 +21,18 @@ public class RobotPosition {
         return y;
     }
 
+    public void setX(int x) {
+        this.x = x;
+    }
+
+    public void setY(int y) {
+        this.y = y;
+    }
+
+    public void setOrientation(Orientation orientation) {
+        this.orientation = orientation;
+    }
+
     public Orientation getOrientation() {
         return orientation;
     }

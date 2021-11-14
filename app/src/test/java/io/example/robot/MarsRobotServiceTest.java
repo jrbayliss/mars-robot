@@ -5,6 +5,8 @@ import org.junit.jupiter.api.Test;
 
 import java.util.List;
 
+import static io.example.robot.MoveInstruction.RIGHT;
+import static io.example.robot.Orientation.EAST;
 import static io.example.robot.Orientation.NORTH;
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -20,8 +22,13 @@ class MarsRobotServiceTest {
     @Test
     void givenNoMoves_thenRobotPositionIsSameAsInput() {
         init(grid1x1());
-        List<RobotPosition> currentRobotPositions = service.robotMissions(missions(mission(position(0, 0, NORTH), instructions())));
-        assertThat(currentRobotPositions).containsOnly(position(0, 0, NORTH));
+        assertThat(singleRobotMission(position(0, 0, NORTH), instructions())).isEqualTo(position(0, 0, NORTH));
+    }
+
+    @Test
+    void givenRightInstructionApplied_robotIsRotated90Degrees() {
+        init(grid1x1());
+        assertThat(singleRobotMission(position(0, 0, NORTH), instructions(RIGHT))).isEqualTo(position(0, 0, EAST));
     }
 
     private void init(GridBounds bounds) {
@@ -30,6 +37,13 @@ class MarsRobotServiceTest {
 
     private static GridBounds grid1x1() {
         return new GridBounds(1,1);
+    }
+
+    private RobotPosition singleRobotMission(RobotPosition position, List<MoveInstruction> instructions) {
+        List<RobotPosition> robotPositions = service.robotMissions(missions(mission(position, instructions)));
+        assertThat(robotPositions).hasSize(1);
+        assertThat(robotPositions.get(0)).isNotNull();
+        return robotPositions.get(0);
     }
 
     private static List<MoveInstruction> instructions(MoveInstruction... moves) {

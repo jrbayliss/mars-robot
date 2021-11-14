@@ -16,6 +16,10 @@ public class RobotMission {
         return position;
     }
 
+    public List<MoveInstruction> getInstructions() {
+        return instructions;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
