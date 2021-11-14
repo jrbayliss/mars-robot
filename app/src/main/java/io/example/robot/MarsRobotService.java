@@ -7,6 +7,7 @@ import java.util.stream.Collectors;
 
 import static io.example.robot.Orientation.EAST;
 import static io.example.robot.Orientation.NORTH;
+import static io.example.robot.Orientation.SOUTH;
 import static io.example.robot.Orientation.WEST;
 
 
@@ -17,7 +18,14 @@ public class MarsRobotService {
 
     public MarsRobotService() {
         APPLY_RIGHT_MAP.put(NORTH, EAST);
+        APPLY_RIGHT_MAP.put(EAST, SOUTH);
+        APPLY_RIGHT_MAP.put(SOUTH, WEST);
+        APPLY_RIGHT_MAP.put(WEST, NORTH);
+
         APPLY_LEFT_MAP.put(NORTH, WEST);
+        APPLY_LEFT_MAP.put(WEST, SOUTH);
+        APPLY_LEFT_MAP.put(SOUTH, EAST);
+        APPLY_LEFT_MAP.put(EAST, NORTH);
     }
 
     public void init(GridBounds bounds) {

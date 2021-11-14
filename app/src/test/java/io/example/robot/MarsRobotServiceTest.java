@@ -2,13 +2,19 @@ package io.example.robot;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 
 import java.util.List;
+import java.util.stream.Stream;
 
+import static io.example.robot.MoveInstruction.FORWARD;
 import static io.example.robot.MoveInstruction.LEFT;
 import static io.example.robot.MoveInstruction.RIGHT;
 import static io.example.robot.Orientation.EAST;
 import static io.example.robot.Orientation.NORTH;
+import static io.example.robot.Orientation.SOUTH;
 import static io.example.robot.Orientation.WEST;
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -27,16 +33,36 @@ class MarsRobotServiceTest {
         assertThat(singleRobotMission(position(0, 0, NORTH), instructions())).isEqualTo(position(0, 0, NORTH));
     }
 
-    @Test
-    void givenRightInstructionApplied_robotIsRotatedRight90Degrees() {
+    @ParameterizedTest
+    @MethodSource("rightInstructionApplied")
+    void givenRightInstructionApplied_robotIsRotatedRight90Degrees(RobotPosition initialPosition, List<MoveInstruction> instructions, RobotPosition finalPosition) {
         init(grid1x1());
-        assertThat(singleRobotMission(position(0, 0, NORTH), instructions(RIGHT))).isEqualTo(position(0, 0, EAST));
+        assertThat(singleRobotMission(initialPosition, instructions)).isEqualTo(finalPosition);
     }
 
-    @Test
-    void givenLeftInstructionApplied_robotIsRotatedLeft90Degrees() {
+    @ParameterizedTest
+    @MethodSource("leftInstructionApplied")
+    void givenLeftInstructionApplied_robotIsRotatedLeft90Degrees(RobotPosition initialPosition, List<MoveInstruction> instructions, RobotPosition finalPosition) {
         init(grid1x1());
-        assertThat(singleRobotMission(position(0, 0, NORTH), instructions(LEFT))).isEqualTo(position(0, 0, WEST));
+        assertThat(singleRobotMission(initialPosition, instructions)).isEqualTo(finalPosition);
+    }
+
+    private static Stream<Arguments> rightInstructionApplied() {
+        return Stream.of(
+            Arguments.of(position(0, 0, NORTH), instructions(RIGHT), position(0, 0, EAST)),
+            Arguments.of(position(0, 0, EAST), instructions(RIGHT), position(0, 0, SOUTH)),
+            Arguments.of(position(0, 0, SOUTH), instructions(RIGHT), position(0, 0, WEST)),
+            Arguments.of(position(0, 0, WEST), instructions(RIGHT), position(0, 0, NORTH))
+        );
+    }
+
+    private static Stream<Arguments> leftInstructionApplied() {
+        return Stream.of(
+            Arguments.of(position(0, 0, NORTH), instructions(LEFT), position(0, 0, WEST)),
+            Arguments.of(position(0, 0, WEST), instructions(LEFT), position(0, 0, SOUTH)),
+            Arguments.of(position(0, 0, SOUTH), instructions(LEFT), position(0, 0, EAST)),
+            Arguments.of(position(0, 0, EAST), instructions(LEFT), position(0, 0, NORTH))
+        );
     }
 
     private void init(GridBounds bounds) {
