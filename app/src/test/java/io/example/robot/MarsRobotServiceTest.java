@@ -16,6 +16,11 @@ import static io.example.robot.Orientation.EAST;
 import static io.example.robot.Orientation.NORTH;
 import static io.example.robot.Orientation.SOUTH;
 import static io.example.robot.Orientation.WEST;
+import static io.example.robot.TestUtil.instructions;
+import static io.example.robot.TestUtil.lostPosition;
+import static io.example.robot.TestUtil.mission;
+import static io.example.robot.TestUtil.missions;
+import static io.example.robot.TestUtil.position;
 import static org.assertj.core.api.Assertions.assertThat;
 
 class MarsRobotServiceTest {
@@ -29,35 +34,35 @@ class MarsRobotServiceTest {
 
     @Test
     void givenNoMoves_thenRobotPositionIsSameAsInput() {
-        init(grid1x1());
+        init(TestUtil.grid1x1());
         assertThat(singleRobotMission(position(0, 0, NORTH), instructions())).isEqualTo(position(0, 0, NORTH));
     }
 
     @ParameterizedTest
     @MethodSource("rightInstructionApplied")
     void givenRightInstructionApplied_robotIsRotatedRight90Degrees(RobotPosition initialPosition, List<MoveInstruction> instructions, RobotPosition finalPosition) {
-        init(grid1x1());
+        init(TestUtil.grid1x1());
         assertThat(singleRobotMission(initialPosition, instructions)).isEqualTo(finalPosition);
     }
 
     @ParameterizedTest
     @MethodSource("leftInstructionApplied")
     void givenLeftInstructionApplied_robotIsRotatedLeft90Degrees(RobotPosition initialPosition, List<MoveInstruction> instructions, RobotPosition finalPosition) {
-        init(grid1x1());
+        init(TestUtil.grid1x1());
         assertThat(singleRobotMission(initialPosition, instructions)).isEqualTo(finalPosition);
     }
 
     @ParameterizedTest
     @MethodSource("forwardInstructionApplied")
     void givenForwardInstructionApplied_robotMovesInTheDirectionItIsFacing(RobotPosition initialPosition, List<MoveInstruction> instructions, RobotPosition finalPosition) {
-        init(grid3x3());
+        init(TestUtil.grid3x3());
         assertThat(singleRobotMission(initialPosition, instructions)).isEqualTo(finalPosition);
     }
 
     @ParameterizedTest
     @MethodSource("lostInstructionsApplied")
     void givenTwoForwardInstructionsAreApplied_robotIsOutOfBoundsAndDeemedLost(RobotPosition initialPosition, List<MoveInstruction> instructions, RobotPosition finalPosition) {
-        init(grid3x3());
+        init(TestUtil.grid3x3());
         assertThat(singleRobotMission(initialPosition, instructions)).isEqualTo(finalPosition);
     }
 
@@ -101,44 +106,10 @@ class MarsRobotServiceTest {
         service.init(bounds);
     }
 
-    private static GridBounds grid1x1() {
-        return new GridBounds(1,1);
-    }
-
-    private static GridBounds grid3x3() {
-        return new GridBounds(3,3);
-    }
-
     private RobotPosition singleRobotMission(RobotPosition position, List<MoveInstruction> instructions) {
         List<RobotPosition> robotPositions = service.robotMissions(missions(mission(position, instructions)));
         assertThat(robotPositions).hasSize(1);
         assertThat(robotPositions.get(0)).isNotNull();
         return robotPositions.get(0);
-    }
-
-    private static List<MoveInstruction> instructions(MoveInstruction... moves) {
-        return List.of(moves);
-    }
-
-    private static RobotPosition position(int x, int y, Orientation orientation) {
-        return new RobotPosition(gridPosition(x, y), orientation);
-    }
-
-    private static RobotPosition lostPosition(int x, int y, Orientation orientation) {
-        RobotPosition position = new RobotPosition(gridPosition(x, y), orientation);
-        position.setLost(true);
-        return position;
-    }
-
-    private static GridPosition gridPosition(int x, int y) {
-        return new GridPosition(x, y);
-    }
-
-    private static List<RobotMission> missions(RobotMission... missions) {
-        return List.of(missions);
-    }
-
-    private static RobotMission mission(RobotPosition position, List<MoveInstruction> instructions) {
-        return new RobotMission(position, instructions);
     }
 }
