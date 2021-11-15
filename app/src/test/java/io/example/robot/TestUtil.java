@@ -3,6 +3,8 @@ package io.example.robot;
 import java.util.List;
 
 public class TestUtil {
+    public static final boolean LOST = true;
+
     static GridBounds grid1x1() {
         return new GridBounds(1, 1);
     }
@@ -23,9 +25,9 @@ public class TestUtil {
         return new RobotPosition(gridPosition(x, y), orientation);
     }
 
-    static RobotPosition lostPosition(int x, int y, Orientation orientation) {
+    static RobotPosition position(int x, int y, Orientation orientation, boolean lost) {
         RobotPosition position = new RobotPosition(gridPosition(x, y), orientation);
-        position.setLost(true);
+        position.setLost(lost);
         return position;
     }
 

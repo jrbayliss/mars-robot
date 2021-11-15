@@ -10,9 +10,9 @@ import static io.example.robot.Orientation.EAST;
 import static io.example.robot.Orientation.NORTH;
 import static io.example.robot.Orientation.SOUTH;
 import static io.example.robot.Orientation.WEST;
+import static io.example.robot.TestUtil.LOST;
 import static io.example.robot.TestUtil.grid6x4;
 import static io.example.robot.TestUtil.instructions;
-import static io.example.robot.TestUtil.lostPosition;
 import static io.example.robot.TestUtil.mission;
 import static io.example.robot.TestUtil.missions;
 import static io.example.robot.TestUtil.position;
@@ -60,7 +60,7 @@ class MarsRobotServiceIT {
             ))
         ).containsExactly(
             position(1, 1, EAST),
-            lostPosition(3, 3, NORTH),
+            position(3, 3, NORTH, LOST),
             position(2, 3, SOUTH));
     }
 

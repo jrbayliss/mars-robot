@@ -16,9 +16,9 @@ import static io.example.robot.Orientation.EAST;
 import static io.example.robot.Orientation.NORTH;
 import static io.example.robot.Orientation.SOUTH;
 import static io.example.robot.Orientation.WEST;
+import static io.example.robot.TestUtil.LOST;
 import static io.example.robot.TestUtil.grid3x3;
 import static io.example.robot.TestUtil.instructions;
-import static io.example.robot.TestUtil.lostPosition;
 import static io.example.robot.TestUtil.mission;
 import static io.example.robot.TestUtil.missions;
 import static io.example.robot.TestUtil.position;
@@ -71,53 +71,65 @@ class MarsRobotServiceTest {
     void givenTwoMissions_thenTwoMissionAreReturned() {
         init(grid3x3());
         assertThat(service.robotMissions(missions(
-            mission(position(1, 1, NORTH), instructions(FORWARD)),
-            mission(position(1, 1, EAST), instructions(FORWARD))))
-        ).containsExactly(position(1, 2, NORTH), position(2, 1, EAST));
+            mission(
+                position(1, 1, NORTH),
+                instructions(FORWARD)),
+            mission(
+                position(1, 1, EAST),
+                instructions(FORWARD))))
+        ).containsExactly(
+            position(1, 2, NORTH),
+            position(2, 1, EAST));
     }
 
     @Test
     void givenFirstMissionRobotIsLost_thenSecondMissionWillUseScentAndNotBeLost() {
         init(grid3x3());
         assertThat(service.robotMissions(missions(
-            mission(position(1, 1, NORTH), instructions(FORWARD, FORWARD)),
-            mission(position(1, 1, NORTH), instructions(FORWARD, FORWARD))))
-        ).containsExactly(lostPosition(1, 2, NORTH), position(1, 2, NORTH));
+            mission(
+                position(1, 1, NORTH),
+                instructions(FORWARD, FORWARD)),
+            mission(
+                position(1, 1, NORTH),
+                instructions(FORWARD, FORWARD))))
+        ).containsExactly(
+            position(1, 2, NORTH, LOST),
+            position(1, 2, NORTH));
     }
 
     private static Stream<Arguments> rightInstructionApplied() {
         return Stream.of(
             Arguments.of(position(0, 0, NORTH), instructions(RIGHT), position(0, 0, EAST)),
-            Arguments.of(position(0, 0, EAST), instructions(RIGHT), position(0, 0, SOUTH)),
+            Arguments.of(position(0, 0, EAST),  instructions(RIGHT), position(0, 0, SOUTH)),
             Arguments.of(position(0, 0, SOUTH), instructions(RIGHT), position(0, 0, WEST)),
-            Arguments.of(position(0, 0, WEST), instructions(RIGHT), position(0, 0, NORTH))
+            Arguments.of(position(0, 0, WEST),  instructions(RIGHT), position(0, 0, NORTH))
         );
     }
 
     private static Stream<Arguments> leftInstructionApplied() {
         return Stream.of(
             Arguments.of(position(0, 0, NORTH), instructions(LEFT), position(0, 0, WEST)),
-            Arguments.of(position(0, 0, WEST), instructions(LEFT), position(0, 0, SOUTH)),
+            Arguments.of(position(0, 0, WEST),  instructions(LEFT), position(0, 0, SOUTH)),
             Arguments.of(position(0, 0, SOUTH), instructions(LEFT), position(0, 0, EAST)),
-            Arguments.of(position(0, 0, EAST), instructions(LEFT), position(0, 0, NORTH))
+            Arguments.of(position(0, 0, EAST),  instructions(LEFT), position(0, 0, NORTH))
         );
     }
 
     private static Stream<Arguments> forwardInstructionApplied() {
         return Stream.of(
             Arguments.of(position(1, 1, NORTH), instructions(FORWARD), position(1, 2, NORTH)),
-            Arguments.of(position(1, 1, EAST), instructions(FORWARD), position(2, 1, EAST)),
+            Arguments.of(position(1, 1, EAST),  instructions(FORWARD), position(2, 1, EAST)),
             Arguments.of(position(1, 1, SOUTH), instructions(FORWARD), position(1, 0, SOUTH)),
-            Arguments.of(position(1, 1, WEST), instructions(FORWARD), position(0, 1, WEST))
+            Arguments.of(position(1, 1, WEST),  instructions(FORWARD), position(0, 1, WEST))
         );
     }
 
     private static Stream<Arguments> lostInstructionsApplied() {
         return Stream.of(
-            Arguments.of(position(1, 1, NORTH), instructions(FORWARD, FORWARD), lostPosition(1, 2, NORTH)),
-            Arguments.of(position(1, 1, EAST), instructions(FORWARD, FORWARD), lostPosition(2, 1, EAST)),
-            Arguments.of(position(1, 1, SOUTH), instructions(FORWARD, FORWARD), lostPosition(1, 0, SOUTH)),
-            Arguments.of(position(1, 1, WEST), instructions(FORWARD, FORWARD), lostPosition(0, 1, WEST))
+            Arguments.of(position(1, 1, NORTH), instructions(FORWARD, FORWARD), position(1, 2, NORTH, LOST)),
+            Arguments.of(position(1, 1, EAST),  instructions(FORWARD, FORWARD), position(2, 1, EAST, LOST)),
+            Arguments.of(position(1, 1, SOUTH), instructions(FORWARD, FORWARD), position(1, 0, SOUTH, LOST)),
+            Arguments.of(position(1, 1, WEST),  instructions(FORWARD, FORWARD), position(0, 1, WEST, LOST))
         );
     }
 
