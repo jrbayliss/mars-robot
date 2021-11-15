@@ -1,7 +1,7 @@
 # Mars Robot
-LME - Engineering Coding Challenge
+Engineering Coding Challenge
 
-Normally I'd work outside, Functional tests, application layer then service layer.
+Normally I'd work outside in; functional tests, application layer then service layer.
 
 TDD is about code quality, with 2-3 hours dev time I'll concentrate on the service first. 
 
